@@ -328,35 +328,8 @@ public class SCLAlertView: UIViewController {
         baseView.frame = rv.bounds
 
         // Alert colour/icon
-        viewColor = UIColor()
-        var iconImage: UIImage
-
-        // Icon style
-        switch style {
-        case .Success:
-            viewColor = UIColorFromRGB(0x22B573)
-            iconImage = SCLAlertViewStyleKit.imageOfCheckmark
-
-        case .Error:
-            viewColor = UIColorFromRGB(0xC1272D)
-            iconImage = SCLAlertViewStyleKit.imageOfCross
-
-        case .Notice:
-            viewColor = UIColorFromRGB(0x727375)
-            iconImage = SCLAlertViewStyleKit.imageOfNotice
-
-        case .Warning:
-            viewColor = UIColorFromRGB(0xFFD110)
-            iconImage = SCLAlertViewStyleKit.imageOfWarning
-
-        case .Info:
-            viewColor = UIColorFromRGB(0x2866BF)
-            iconImage = SCLAlertViewStyleKit.imageOfInfo
-
-        case .Edit:
-            viewColor = UIColorFromRGB(0xA429FF)
-            iconImage = SCLAlertViewStyleKit.imageOfEdit
-        }
+        viewColor = SCLAlertViewStyleKit.colorForStyle(style)
+        var iconImage = SCLAlertViewStyleKit.imageForStyle(style)
 
         // Title
         if !title.isEmpty {
@@ -423,16 +396,19 @@ public class SCLAlertView: UIViewController {
                 self.view.removeFromSuperview()
         })
     }
-
-    // Helper function to convert from RGB to UIColor
-    func UIColorFromRGB(rgbValue: UInt) -> UIColor {
-        return UIColor(
-            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-            alpha: CGFloat(1.0)
-        )
+    
+    public func setColorForStyle(color:UIColor, style:SCLAlertViewStyle){
+        SCLAlertViewStyleKit.setColorForStyle(color, style: style)
     }
+}
+// Helper function to convert from RGB to UIColor
+func UIColorFromRGB(rgbValue: UInt) -> UIColor {
+    return UIColor(
+        red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+        green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+        blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+        alpha: CGFloat(1.0)
+    )
 }
 
 // ------------------------------------
@@ -456,6 +432,41 @@ class SCLAlertViewStyleKit : NSObject {
         static var infoTargets: [AnyObject]?
         static var imageOfEdit: UIImage?
         static var editTargets: [AnyObject]?
+        
+        static var colors:[SCLAlertViewStyle:UIColor] = [
+            .Success:UIColorFromRGB(0x22B573),
+            .Error:UIColorFromRGB(0xC1272D),
+            .Notice:UIColorFromRGB(0x727375),
+            .Warning:UIColorFromRGB(0xFFD110),
+            .Info:UIColorFromRGB(0x2866BF),
+            .Edit:UIColorFromRGB(0xA429FF)]
+    }
+    class func imageForStyle(style:SCLAlertViewStyle)->UIImage{
+        switch style {
+        case .Success:
+            return SCLAlertViewStyleKit.imageOfCheckmark
+            
+        case .Error:
+            return SCLAlertViewStyleKit.imageOfCross
+            
+        case .Notice:
+            return SCLAlertViewStyleKit.imageOfNotice
+            
+        case .Warning:
+            return SCLAlertViewStyleKit.imageOfWarning
+            
+        case .Info:
+            return SCLAlertViewStyleKit.imageOfInfo
+            
+        case .Edit:
+            return SCLAlertViewStyleKit.imageOfEdit
+        }
+    }
+    class func colorForStyle(style:SCLAlertViewStyle)->UIColor{
+        return Cache.colors[style] ?? UIColor()
+    }
+    class func setColorForStyle(color:UIColor, style:SCLAlertViewStyle){
+        Cache.colors.updateValue(color, forKey: style)
     }
 
     // Initialization
