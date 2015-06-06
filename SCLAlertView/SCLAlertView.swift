@@ -397,7 +397,7 @@ public class SCLAlertView: UIViewController {
         })
     }
     
-    public func setColorForStyle(color:UIColor, style:SCLAlertViewStyle){
+    public class func setColorForStyle(color:UIColor, style:SCLAlertViewStyle){
         SCLAlertViewStyleKit.setColorForStyle(color, style: style)
     }
 }
